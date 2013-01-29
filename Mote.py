@@ -367,8 +367,12 @@ class MoteSearchThread(threading.Thread):
     def cleanlsposix(self, fullpath, file_list):
         paths = {}
         paths['..'] = {}
-        paths['..']['path'] = '/'.join(self.sftp.getcwd().split('/')[0:-1])
+        tpath = '/'.join(self.sftp.getcwd().split('/')[0:-1])
+        if tpath == "":
+            tpath = "/"
+        paths['..']['path'] = tpath
         paths['..']['type'] = 'folder'
+        print repr(paths['..'])
         for path, attr in file_list.items():
             dflag = oct(attr.st_mode)
             named_path = cleanpath(fullpath, path)
