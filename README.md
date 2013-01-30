@@ -30,9 +30,9 @@ Sublime Text plugin to browse and edit files over sftp/ssh2
 
 1. Download this package, save, and extract to your sublime text packages folder.
     
-    - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
+   - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
 
-    - Copy the Mote directoy to this folder
+   - Copy the Mote directoy to this folder
 
 2. Close and Reopen Sublime Text 2
 
@@ -43,18 +43,19 @@ If Connections do not work make sure you have connected to the server once from 
 
 1. Download this package, save, and extract to your sublime text packages folder.
     
-    - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
+   - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
 
-    - Copy the Mote directoy to this folder
+   - Copy the Mote directoy to this folder
 
 2. Install python-dev so you can compile pycrypto
-    - Download PyCrypto from https://github.com/dlitz/pycrypto
+    
+   - Download PyCrypto from https://github.com/dlitz/pycrypto
 
-    - chmod +x setup.py
+   - chmod +x setup.py
 
-    - run ./setup.py build
+   - run ./setup.py build
 
-    - copy the Crypto folder from build->lib.<OS>-<PythonVer> to the Mote Lib Folder overwriting the Crypto directory there
+   - copy the Crypto folder from build->lib.<OS>-<PythonVer> to the Mote Lib Folder overwriting the Crypto directory there
 
 3. Close and Reopen Sublime Text 2
 
