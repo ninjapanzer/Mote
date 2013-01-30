@@ -8,7 +8,9 @@ Sublime Text plugin to browse and edit files over sftp/ssh2
 
 # Installation
 
-1. Download this package and save and extract to your packages folder.
+## Windows
+
+1. Download this package, save, and extract to your sublime text packages folder.
 
 2. Download and install PuTTY, preferably the whole package.
 
@@ -23,6 +25,41 @@ Sublime Text plugin to browse and edit files over sftp/ssh2
 3. Make psftp accessible to the plugin
    
    - Copy `psftp.exe` to `Mote\`
+
+##OSX
+
+1. Download this package, save, and extract to your sublime text packages folder.
+    
+    - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
+
+    - Copy the Mote directoy to this folder
+
+2. Close and Reopen Sublime Text 2
+
+If Connections do not work make sure you have connected to the server once from the command line using:
+  ssh <username>@<domain> so you can accept the hostkey making it available to the plugin
+
+##Linux
+
+1. Download this package, save, and extract to your sublime text packages folder.
+    
+    - From the 'Sublime Text 2' Menu Select Preferences -> Browse Packages...
+
+    - Copy the Mote directoy to this folder
+
+2. Install python-dev so you can compile pycrypto
+    - Download PyCrypto from https://github.com/dlitz/pycrypto
+
+    - chmod +x setup.py
+
+    - run ./setup.py build
+
+    - copy the Crypto folder from build->lib.<OS>-<PythonVer> to the Mote Lib Folder overwriting the Crypto directory there
+
+3. Close and Reopen Sublime Text 2
+
+If Connections do not work make sure you have connected to the server once from the command line using:
+  ssh <username>@<domain> so you can accept the hostkey making it available to the plugin
 
 #Usage
 
@@ -102,3 +139,9 @@ Then
 - Browse around. The file list populates as you delve deeper into the file tree.
 - Click on a file to download to a temp folder and open it
 - Any saves on that file will automatically upload it. 
+
+#ToDos
+
+1. Allow for port configuration with paramiko for linux osx
+2. Automate build for Crypto on install
+3. If hostkey doesnot always exist direct user to ssh to location once before trying to connect
