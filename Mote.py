@@ -148,13 +148,6 @@ class MoteSearchThread(threading.Thread):
         else:
             self.hostname = connection_string
 
-        #lovely debugging
-        print "Hostname: " + self.hostname
-        print "Username: " + self.username
-        print self.connection_string
-
-
-
         if ('-pw' not in connection_string) and password:
             self.connection_string = [r'-pw', password, connection_string]
         else:
