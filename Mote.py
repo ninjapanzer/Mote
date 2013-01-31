@@ -365,12 +365,13 @@ class MoteSearchThread(threading.Thread):
             tpath = "/"
         paths['..']['path'] = tpath
         paths['..']['type'] = 'folder'
-        print repr(paths['..'])
         for path, attr in file_list.items():
             dflag = oct(attr.st_mode)
             named_path = cleanpath(fullpath, path)
             if str(dflag[0:2]) == '04':
                 path_key = named_path + '/..'
+            elif str(dflag[0:3]) == '012':
+                path_key = named_path + "->" + self.sftp.readlink(path)
             else:
                 path_key = named_path + '-'
 
@@ -378,6 +379,15 @@ class MoteSearchThread(threading.Thread):
             paths[path_key]['path'] = named_path
             if str(dflag[0:2]) == '04':
                 paths[path_key]['type'] = 'folder'
+            elif str(dflag[0:3]) == '012':
+                realpath = self.sftp.readlink(path)
+                substat = self.sftp.lstat(realpath)
+                subdflag = oct(substat.st_mode)
+                paths[path_key]['path'] = realpath
+                if str(subdflag[0:2]) == '04':
+                    paths[path_key]['type'] = 'folder'
+                else:
+                    paths[path_key]['type'] = 'file'
             else:
                 paths[path_key]['type'] = 'file'
         return paths
