@@ -146,3 +146,4 @@ Then
 1. Allow for port configuration with paramiko for linux osx
 2. Automate build for Crypto on install
 3. If hostkey doesnot always exist direct user to ssh to location once before trying to connect
+4. Add SymLink Support (Done in testing branch)
