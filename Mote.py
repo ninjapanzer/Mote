@@ -139,6 +139,11 @@ class MoteSearchThread(threading.Thread):
         self.connection_string = connection_string
         self.os_mode = os.name
         self.base_dir = ''
+        if not port == None:
+            self.port = port
+        else:
+            print "Port Not Defined Defaulting to 22"
+            self.port = 22
 
         #Identify if this is a username@hostname string
         connection_string_parts = connection_string.split('@')
@@ -163,6 +168,7 @@ class MoteSearchThread(threading.Thread):
 
         self.results = {}
         self.transport = None
+        self.sshClient = None
         self.sftp = None
 
         self.results_lock = threading.Condition()
@@ -197,9 +203,16 @@ class MoteSearchThread(threading.Thread):
                 hostkey = host_keys[self.hostname][hostkeytype]
                 print 'Using host key of type %s' % hostkeytype
             try:
-                self.transport = t = paramiko.Transport((self.hostname, 22))
-                t.connect(username=self.username, password=self.password, hostkey=hostkey)
-                self.sftp = paramiko.SFTPClient.from_transport(t)
+                self.sshClient = client = paramiko.SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect(self.hostname, self.port, username=self.username, password=self.password)
+                #keyfile = paramiko.DSSKey.from_private_key_file(private_key)
+                #self.transport = t = paramiko.Transport((self.hostname, 22))
+                #t.connect(username=self.username, password=self.password, hostkey=hostkey)
+                #self.sftp = paramiko.SFTPClient.from_transport(t)
+                self.transport = client.get_transport()
+                self.sftp = client.open_sftp()
                 print "SFTP INIT: "+ str(self.transport.is_active())
                 self.add_command('cd',self.search_path, True)
             except Exception:
