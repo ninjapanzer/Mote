@@ -1,3 +1,11 @@
+# Changes
+
+  -Feb 01 Started working on sudo permissions for reading and moving to files
+  -Feb 01 Moved SFTP setup to use parmiko ssh to allow auto adding hostkeys
+  -Feb 01 Added symlink support
+  -Jan 31 Updated install instructions and began debugging linux installs
+  -Jan 23 Added Paramiko for OSX and Linux Support 
+
 # Info
 
 Sublime Text plugin to browse and edit files over sftp/ssh2
@@ -146,4 +154,3 @@ Then
 1. Allow for port configuration with paramiko for linux osx
 2. Automate build for Crypto on install
 3. If hostkey doesnot always exist direct user to ssh to location once before trying to connect
-4. Add SymLink Support (Done in testing branch)
