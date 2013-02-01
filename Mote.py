@@ -211,12 +211,14 @@ class MoteSearchThread(threading.Thread):
                 #self.transport = t = paramiko.Transport((self.hostname, 22))
                 #t.connect(username=self.username, password=self.password, hostkey=hostkey)
                 #self.sftp = paramiko.SFTPClient.from_transport(t)
-                self.transport = client.get_transport()
-                self.sftp = client.open_sftp()
+                self.transport = t = client.get_transport()
+                self.sftp = paramiko.SFTPClient.from_transport(t)
+                #self.sftp = client.open_sftp()
                 print "SFTP INIT: "+ str(self.transport.is_active())
                 self.add_command('cd',self.search_path, True)
-            except Exception:
-                print "transport Failed"
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Server Config Error Check that you have valid credentils in servers.json'),0)
+                print "transport Failed ", e
             return self
             
 
