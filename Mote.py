@@ -329,10 +329,14 @@ class MoteSearchThread(threading.Thread):
             self.results.update(results)
         else:
             file_list = {}
-            file_list = dict(zip(self.sftp.listdir(self.sftp.getcwd()), self.sftp.listdir_attr(self.sftp.getcwd())))
-            #results = self.cleanls(fullpath, results)
-            results = self.cleanlsposix(fullpath, file_list)
-            self.results = results
+            try:
+                file_list = dict(zip(self.sftp.listdir(self.sftp.getcwd()), self.sftp.listdir_attr(self.sftp.getcwd())))
+                results = self.cleanlsposix(fullpath, file_list)
+                self.results = results
+            except IOError as io:
+                sublime.set_timeout(lambda:sublime.status_message('IO Error  %s' % io),10)
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Generic Error processing  %s' % fullpath),10)
 
         if self.idle_recursive:
             subfolders = dict((k,v) for k,v in results.items() if v['type'] == 'folder')
