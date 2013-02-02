@@ -211,12 +211,14 @@ class MoteSearchThread(threading.Thread):
                 #self.transport = t = paramiko.Transport((self.hostname, 22))
                 #t.connect(username=self.username, password=self.password, hostkey=hostkey)
                 #self.sftp = paramiko.SFTPClient.from_transport(t)
-                self.transport = client.get_transport()
-                self.sftp = client.open_sftp()
+                self.transport = t = client.get_transport()
+                self.sftp = paramiko.SFTPClient.from_transport(t)
+                #self.sftp = client.open_sftp()
                 print "SFTP INIT: "+ str(self.transport.is_active())
                 self.add_command('cd',self.search_path, True)
-            except Exception:
-                print "transport Failed"
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Server Config Error Check that you have valid credentils in servers.json'),0)
+                print "transport Failed ", e
             return self
             
 
@@ -268,9 +270,13 @@ class MoteSearchThread(threading.Thread):
         else:
             print "changing dir: " + path
             print self.sftp.getcwd()
-            self.sftp.chdir(path)
-            self.search_path = self.sftp.getcwd()
-            self.add_command('ls',path, show_panel)
+            try:
+                self.sftp.chdir(path)
+                self.search_path = self.sftp.getcwd()
+                print self.sftp.getcwd()
+                self.add_command('ls',path, show_panel)
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Generic Error processing  %s' % path),10)
 
 
     def run(self):
@@ -327,10 +333,14 @@ class MoteSearchThread(threading.Thread):
             self.results.update(results)
         else:
             file_list = {}
-            file_list = dict(zip(self.sftp.listdir(self.sftp.getcwd()), self.sftp.listdir_attr(self.sftp.getcwd())))
-            #results = self.cleanls(fullpath, results)
-            results = self.cleanlsposix(fullpath, file_list)
-            self.results = results
+            try:
+                file_list = dict(zip(self.sftp.listdir(self.sftp.getcwd()), self.sftp.listdir_attr(self.sftp.getcwd())))
+                results = self.cleanlsposix(fullpath, file_list)
+                self.results = results
+            except IOError as io:
+                sublime.set_timeout(lambda:sublime.status_message('IO Error  %s when listing -> %s' % (io,fullpath)),10)
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Generic Error processing  %s' % fullpath),10)
 
         if self.idle_recursive:
             subfolders = dict((k,v) for k,v in results.items() if v['type'] == 'folder')
@@ -349,8 +359,10 @@ class MoteSearchThread(threading.Thread):
         if not self.is_os_mode('posix'):
             self.sftp.send('get "%s" "%s"' % (path,localpath) )
         else:
-            print "preget: "+ path+" "+localpath
-            self.sftp.get(path, localpath)
+            try:
+                self.sftp.get(path, localpath)
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Generic Error processing  %s' % path),10)
 
         sublime.set_timeout(lambda:self.window.open_file(localpath), 0)
 
@@ -362,7 +374,10 @@ class MoteSearchThread(threading.Thread):
         if not self.is_os_mode('posix'):
             self.sftp.send('put "%s" "%s"' % (localpath,path) )
         else:
-            self.sftp.put(localpath, '/'+path)
+            try:
+                self.sftp.put(localpath, '/'+path)
+            except Exception as e:
+                sublime.set_timeout(lambda:sublime.status_message('Generic Error processing  %s' % path),10)
 
     def showfilepanel(self):
         self.keys = sorted(self.results.keys())
